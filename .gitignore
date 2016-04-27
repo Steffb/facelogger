@@ -1,0 +1,7 @@
+*~
+SECRETS.txt
+.*.swp
+*.pyc
+generated_graphs/
+log/
+facelogs/
