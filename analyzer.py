@@ -7,7 +7,7 @@ import pickle
 import datetime
 import time
 import hashlib
-
+import operator
 
 
 def localtest(userList, fromhour):
@@ -112,15 +112,36 @@ def last_x_hours(userList, backtrack_hours):
                 #hash = hashlib.md5('').hexdigest()
                 hash =user
                 for username in data:
+
                     if(hash in  username):
                         #print 'found on at '+str(time)
                         found = True
                         mydict[user].append(1)
+
                 if(not found):
                     mydict[user].append(0)
                     #print '\t not active at '+str(time)
 
-    return mydict
 
 
 
+    namelist = sort_on_most_active(mydict)
+    return mydict,namelist
+
+
+def sort_on_most_active(user_dict):
+    count_dict = {}
+
+    for key,value in user_dict.iteritems():
+        total_counter = 0
+        for element in value:
+            if(element) : total_counter +=1
+
+        count_dict[key] = total_counter
+
+    count_dict =  sorted(count_dict.items(), key=operator.itemgetter(1))
+    count_dict.reverse()
+    sorted_name_list = []
+    for i in count_dict:
+        sorted_name_list.append(i[0])
+    return sorted_name_list

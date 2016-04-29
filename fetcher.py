@@ -55,7 +55,7 @@ def runner(fromhour, tohour, sleepseconds):
         currentHour =datetime.datetime.fromtimestamp(now).hour
         currentMin =datetime.datetime.fromtimestamp(now).minute
 
-        if(currentHour <= fromhour  or currentHour >= tohour):
+        if(currentHour < fromhour  or currentHour > tohour):
         #if(True):
 
             # if its not time sleep for an hour.
@@ -115,4 +115,4 @@ def runner(fromhour, tohour, sleepseconds):
 
 
 #scrapeFacebook()
-runner(6,24,15)
+runner(fromhour=0, tohour=24, sleepseconds=15)

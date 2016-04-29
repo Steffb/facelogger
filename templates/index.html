@@ -11,10 +11,10 @@
 
 
 <h1>Welcome to the facebook stalker</h1>
-<h3>Todays earlybird : </h3>
+<h3>Todays earlybird : {{earlybird}} </h3>
 
-<h3>Todays laziest : </h3>
-<h3>Todays best: </h3>
+<h3>Todays laziest : {{activist}} </h3>
+
 
 <script type="text/javascript">
 
@@ -23,7 +23,7 @@ var times = {{timelist | safe}}
 
 </script>
 
-	{%for user in people%}
+	{%for user in sorted_names%}
 	<h1>{{user}}</h1>
 
 	<canvas id="{{user}}" width="1200" height="100"></canvas>
