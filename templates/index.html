@@ -2,10 +2,11 @@
 <html>
 <head>
 	<title>Graph page</title>
-<script type="text/javascript" src="../static/js/chart.js"></script>
-
+	<script type="text/javascript" src="../static/js/chart.js"></script>
+	<link rel="stylesheet" type="text/css" href="/static/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="/static/site.css" />
 	<!-- How fast you want the page to refresh -->
-<meta http-equiv="refresh" content="60" >
+	<meta http-equiv="refresh" content="60" >
 </head>
 <body>
 
@@ -15,52 +16,41 @@
 
 <h3>Todays laziest : {{activist}} </h3>
 
-
 <script type="text/javascript">
-
 
 var times = {{timelist | safe}}
 
 </script>
 
 	{%for user in sorted_names%}
-	<h1>{{user}}</h1>
+	<div class="jumbotron">
+		<h1>{{user}}</h1>
+		<canvas id="{{user}}" width="1200" height="100"></canvas>
+		<script>
+			onlinelist= {{ people[user]| safe}}
 
-	<canvas id="{{user}}" width="1200" height="100"></canvas>
+			var options = {scaleShowGridLines : true,
+			bezierCurve : false,
+			customTooltips: false,
+			scaleShowHorizontalLines: false}
 
-	<script>
-	onlinelist= {{ people[user]| safe}}
-
-	var options = {scaleShowGridLines : true,
-	bezierCurve : false,
-	customTooltips: false,
-	scaleShowHorizontalLines: false}
-
-	var buyerData = {
-		labels : times,
-		datasets : [
-			{
-				fillColor : "rgba(172,194,132,0.4)",
-				strokeColor : "#ACC26D",
-				pointColor : "#fff",
-				pointStrokeColor : "#9DB86D",
-				data : onlinelist,
-				name : 'myname'
+			var buyerData = {
+				labels : times,
+				datasets : [{
+					fillColor : "rgba(172,194,132,0.4)",
+					strokeColor : "#ACC26D",
+					pointColor : "#fff",
+					pointStrokeColor : "#9DB86D",
+					data : onlinelist,
+					name : 'myname'
+				}]
 			}
-		]
-	}
-	// Get the context of the canvas element we want to select
-	var ctx = document.getElementById("{{user}}").getContext("2d");
-	var myNewChart = new Chart(ctx).Line(buyerData,options);
-
-
-
-
-
-	</script>
+			// Get the context of the canvas element we want to select
+			var ctx = document.getElementById("{{user}}").getContext("2d");
+			var myNewChart = new Chart(ctx).Line(buyerData,options);
+		</script>
+	</div>
 	{%endfor%}
-
-
 
 </body>
 </html>
