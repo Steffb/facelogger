@@ -7,47 +7,30 @@ import os
 import pickle
 import hashlib
 import datetime
+import os
 
 
 
-def scrapeFacebook():
 
-    #os.chdir('/Users/steffenfb/PycharmProjects/zzzzz/')
-    print '\t[Console] Starting fetcher'
-    file = open('SECRETS.txt','r')
-    email = file.readline().split('=')[1]
-    pwd = file.readline().split('=')[1]
+def scrapeFacebook(driver):
 
-
-    driver = webdriver.Firefox()
-
-    # Change default timeout and window size.
-    driver.implicitly_wait(120)
-    driver.set_window_size(1280,700)
-
-    driver.get('https://www.facebook.com/')
-    emailBox = driver.find_element_by_id('email')
-    emailBox.send_keys(email)
-    passwordBox = driver.find_element_by_id('pass')
-    passwordBox.send_keys(pwd)
-    driver.find_element_by_id('loginbutton').click()
-    # To let the async menu load
+   
+    
+    #driver.find_element_by_id('loginbutton').click()
+    
     print '\tsleeping'
-    time.sleep(5)
+    time.sleep(2)
     print '\tWoke up'
     cono = driver.find_element_by_tag_name('body')
     cono = cono.text.encode('ascii','ignore')
-
-    driver.close()
     return cono
 
-def getContent():
-    file = open('dump','r')
-    return file.read()
+
 
  # Set the hours you want the fetcher to fetch military time
  # Sleepsecond is how long break between fetches
-def runner(fromhour, tohour, sleepseconds):
+def runner(fromhour, tohour, sleepseconds,send_remote):
+    driver = create_facebook_driver()
     while(True):
         now = time.time()
 
@@ -69,9 +52,7 @@ def runner(fromhour, tohour, sleepseconds):
 
             print 'Console > Collecting online people'
 
-            #data = getContent()
-            data = scrapeFacebook()
-            #os.chdir('/Users/steffenfb/Documents/facelogs')
+            data = scrapeFacebook(driver)
             lines = data.split('\n')
             collectNames =False
             onlineNames= []
@@ -96,23 +77,55 @@ def runner(fromhour, tohour, sleepseconds):
 
                     if(len(line)>4):
 
-                        #onlineNames.append(hashlib.md5(line).hexdigest())
                         onlineNames.append(line)
-                        #print line
+                        
 
                     #Assume its a time and we want to skip the next line
                     if(len(line)<4):
                         skipnext = True
 
-
+            
             pickle.dump(onlineNames, open('facelogs/'+str(int(time.time()))+'.p','wb'))
             print 'Console > sleeping for %d seconds'%(sleepseconds)
             print 'collected '+str(len(onlineNames))
-
+            if(send_remote):
+                print '[Sending to remote]'
+                os.system('scp ./facelogs/*p lars@129.241.200.206:~/facelogger/facelogs')
+                print '[removing the sent files]'
+                os.system('rm ./facelogs/*p')	
             #Wait between fetching
             time.sleep(sleepseconds)
 
+def create_facebook_driver():
+    print '\t[Console] Starting fetcher'
+    file = open('SECRETS.txt','r')
+    email = file.readline().split('=')[1]
+    pwd = file.readline().split('=')[1]
 
 
-#scrapeFacebook()
-runner(fromhour=0, tohour=24, sleepseconds=15)
+    driver = webdriver.Firefox()
+
+    # Change default timeout and window size.
+    #driver.implicitly_wait(120)
+    driver.set_window_size(1280,700)
+    
+    driver.get('https://www.facebook.com/')
+    time.sleep(2)
+    emailBox = driver.find_element_by_id('email')
+    emailBox.send_keys(email)
+    time.sleep(2)
+    passwordBox = driver.find_element_by_id('pass')
+    passwordBox.send_keys(pwd)
+    time.sleep(2)
+    return driver
+
+
+
+runner(fromhour=0, tohour=24, sleepseconds=15,send_remote=True)
+
+#os.system('ssh lars@129.241.200.206 && ls && pwd')
+
+
+
+#os.system('scp /path/to/files/*.p lars@129.241.208.5:mappenavn/
+
