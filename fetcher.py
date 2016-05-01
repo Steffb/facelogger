@@ -121,7 +121,7 @@ def create_facebook_driver():
 
 
 
-runner(fromhour=0, tohour=24, sleepseconds=15,send_remote=True)
+runner(fromhour=0, tohour=24, sleepseconds=120,send_remote=True)
 
 #os.system('ssh lars@129.241.200.206 && ls && pwd')
 
